@@ -1,0 +1,16 @@
+- name: Update apt cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 86400
+  become: true
+  become_method: sudo
+- name: Install base packages
+  apt: name={{ packages }} state=present
+  vars:
+    packages:
+      - openjdk-8-jre
+      - unzip
+      - policykit-1
+      - lsof
+  become: true
+  become_method: sudo

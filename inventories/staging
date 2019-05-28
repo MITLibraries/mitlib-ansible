@@ -1,0 +1,9 @@
+[geoservers]
+172.0.1.65 ansible_user=admin
+
+[solrs]
+172.0.1.64 ansible_user=admin
+
+[staging:children]
+geoservers
+solrs

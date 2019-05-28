@@ -1,0 +1,56 @@
+- name: Create Solr user
+  user:
+    name: solr
+    create_home: no
+  become: true
+  become_method: sudo
+- name: Download Solr
+  unarchive:
+    remote_src: yes
+    src: "https://www-us.apache.org/dist/lucene/solr/{{ solr_version }}/solr-{{ solr_version }}.tgz"
+    dest: /opt
+    creates: /opt/solr-{{ solr_version }}
+    group: solr
+    owner: solr
+  become: true
+  become_method: sudo
+- name: Copy Geoweb core config
+  copy:
+    src: geoweb/
+    dest: "{{ solr_home }}/geoweb/"
+    owner: solr
+    group: solr
+  become: true
+  become_method: sudo
+- name: Copy Solr config
+  copy:
+    src: solr.xml
+    dest: "{{ solr_home }}/solr.xml"
+    owner: solr
+    group: solr
+  become: true
+  become_method: sudo
+- name: Link Solr install
+  file:
+    path: "{{ solr_install }}"
+    src: /opt/solr-{{ solr_version }}
+    state: link
+    group: solr
+    owner: solr
+  become: true
+  become_method: sudo
+  notify: restart solr
+- name: Install unit file
+  template:
+    src: solr.service.j2
+    dest: /etc/systemd/system/solr.service
+  become: true
+  become_method: sudo
+- name: Enable service
+  systemd:
+    name: solr
+    enabled: yes
+    daemon_reload: true
+  become: true
+  become_method: sudo
+  notify: restart solr

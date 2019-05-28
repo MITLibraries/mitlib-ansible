@@ -1,0 +1,13 @@
+[Unit]
+Description=GeoServer
+
+[Service]
+Environment=GEOSERVER_HOME={{ geoserver_home }}
+Environment=GEOSERVER_DATA_DIR={{ geoserver_data }}
+ExecStart={{ geoserver_home }}/bin/startup.sh
+Restart=always
+User=geoserver
+Group=geoserver
+
+[Install]
+WantedBy=multi-user.target
