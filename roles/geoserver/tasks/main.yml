@@ -1,0 +1,88 @@
+- name: Create geoserver user
+  user:
+    name: geoserver
+    create_home: no
+  become: true
+  become_method: sudo
+- name: Create data directory
+  file:
+    state: directory
+    path: "{{ geoserver_data }}"
+    owner: geoserver
+    group: geoserver
+    mode: 0755
+  become: true
+  become_method: sudo
+- name: Download GeoServer
+  unarchive:
+    remote_src: yes
+    src: "https://sourceforge.net/projects/geoserver/files/GeoServer/{{ geoserver_version }}/geoserver-{{ geoserver_version }}-bin.zip"
+    dest: /opt
+    creates: /opt/geoserver-{{ geoserver_version }}
+    group: geoserver
+    owner: geoserver
+  become: true
+  become_method: sudo
+- name: Clean up data dir
+  file:
+    path: "/opt/geoserver-{{ geoserver_version }}/data_dir/{{ item }}"
+    state: absent
+  with_items:
+    - demo
+    - workspaces
+    - www
+    - coverages
+    - data
+    - layergroups
+    - gwc-layers
+  become: true
+  become_method: sudo
+- name: Copy data directory
+  shell: "cp -rnp /opt/geoserver-{{ geoserver_version }}/data_dir/* {{ geoserver_data }}"
+  become: true
+  become_method: sudo
+- name: Apply local config
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: geoserver
+    group: geoserver
+  with_items:
+    - {src: "geowebcache-diskquota.xml", dest: "{{ geoserver_data }}/gwc/"}
+    - {src: "gwc-gs.xml", dest: "{{ geoserver_data }}"}
+    - {src: "config.xml", dest: "{{ geoserver_data }}/security/usergroup/default/"}
+  become: true
+  become_method: sudo
+- name: Set password
+  template:
+    src: users.xml.j2
+    dest: "{{ geoserver_data }}/security/usergroup/default/users.xml"
+    owner: geoserver
+    group: geoserver
+    mode: '0600'
+  become: true
+  become_method: sudo
+- name: Link Geoserver home
+  file:
+    path: "{{ geoserver_home }}"
+    src: "/opt/geoserver-{{ geoserver_version }}"
+    state: link
+    group: geoserver
+    owner: geoserver
+  become: true
+  become_method: sudo
+  notify: restart geoserver
+- name: Install unit file
+  template:
+    src: geoserver.service.j2
+    dest: /etc/systemd/system/geoserver.service
+  become: true
+  become_method: sudo
+- name: Enable service
+  systemd:
+    name: geoserver
+    enabled: yes
+    daemon_reload: true
+  become: true
+  become_method: sudo
+  notify: restart geoserver

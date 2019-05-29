@@ -1,0 +1,4 @@
+- name: restart geoserver
+  systemd:
+    state: restarted
+    name: geoserver

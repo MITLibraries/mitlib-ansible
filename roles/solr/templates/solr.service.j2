@@ -1,0 +1,16 @@
+[Unit]
+Description=Solr
+
+[Service]
+Environment=SOLR_HOME={{ solr_home }}
+Environment=SOLR_JAVA_MEM=-Xmx1024m
+ExecStart={{ solr_install }}/bin/solr start -f
+Restart=always
+RestartSec=1s
+User=solr
+Group=solr
+LimitNOFILE=65536
+LimitNPROC=65536
+
+[Install]
+WantedBy=multi-user.target
