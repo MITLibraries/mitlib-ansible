@@ -23,6 +23,15 @@
     owner: geoserver
   become: true
   become_method: sudo
+  notify: restart geoserver
+- name: Download S3 GeoTiff plugin
+  unarchive:
+    remote_src: yes
+    src: "https://build.geoserver.org/geoserver/{{ geoserver_minor_version }}.x/community-latest/geoserver-{{ geoserver_minor_version }}-SNAPSHOT-s3-geotiff-plugin.zip"
+    dest: /opt/geoserver-{{ geoserver_version }}/webapps/geoserver/WEB-INF/lib/
+    creates: /opt/geoserver-{{ geoserver_version }}/webapps/geoserver/WEB-INF/lib/gs-s3-geotiff-{{ geoserver_minor_version }}-SNAPSHOT.jar
+  become: true
+  become_method: sudo
 - name: Clean up data dir
   file:
     path: "/opt/geoserver-{{ geoserver_version }}/data_dir/{{ item }}"

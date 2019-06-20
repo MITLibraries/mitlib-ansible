@@ -1,4 +1,5 @@
 geoserver_version: 2.15.1
+geoserver_minor_version: "2.15"
 geoserver_data: /var/geoserver/data
 geoserver_home: /opt/geoserver
 geoserver_user: admin
