@@ -1,3 +1,3 @@
-solr_version: 7.7.1
-solr_home: /var/solr/data
+solr_version: 7.7.2
+solr_home: /mnt/solr/solr/data
 solr_install: /opt/solr
