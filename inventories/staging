@@ -1,8 +1,8 @@
 [geoservers]
-172.0.1.65 ansible_user=admin
+geoserver-stage.mitlib.net ansible_user=admin
 
 [solrs]
-172.0.1.64 ansible_user=admin
+solr-stage.mitlib.net ansible_user=admin
 
 [staging:children]
 geoservers
