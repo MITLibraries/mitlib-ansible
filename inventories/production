@@ -1,0 +1,9 @@
+[geoservers]
+geoserver-prod.mitlib.net ansible_user=admin
+
+[solrs]
+solr-prod.mitlib.net ansible_user=admin
+
+[production:children]
+geoservers
+solrs
